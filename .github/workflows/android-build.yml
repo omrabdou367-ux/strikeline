@@ -25,23 +25,11 @@ jobs:
       - name: Setup Android SDK
         uses: android-actions/setup-android@v2
 
-      - name: Grant execute permission for gradlew
-        run: |
-          if [ -f "packaging/android/apk/gradlew" ]; then
-            chmod +x packaging/android/apk/gradlew
-          elif [ -f "gradlew" ]; then
-            chmod +x gradlew
-          fi
-
       - name: Build APK with Gradle
         run: |
-          cd packaging/android/apk || true
-          if [ -f "./gradlew" ]; then
-            ./gradlew assembleDebug --stacktrace
-          else
-            echo "Gradle wrapper not found"
-            exit 1
-          fi
+          cd packaging/android/apk
+          chmod +x gradlew
+          ./gradlew assembleDebug --stacktrace
 
       - name: Upload Strikeline APK Artifact
         uses: actions/upload-artifact@v3
