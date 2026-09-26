@@ -25,15 +25,16 @@ jobs:
       - name: Accept Android SDK Licenses
         run: yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --licenses || true
 
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v3
+
       - name: Build APK with Gradle
         run: |
           cd packaging/android/apk || true
-          if [ -f "./gradlew" ]; then
-            chmod +x gradlew
-            ./gradlew assembleDebug --stacktrace
-          else
-            find . -name "gradlew" -exec chmod +x {} \; -exec {} assembleDebug \;
-          fi
+          chmod +x gradlew || true
+          ./gradlew assembleDebug --no-daemon --stacktrace --info
+        env:
+          GRADLE_OPTS: "-Xmx4096m -XX:MaxMetaspaceSize=1024m"
 
       - name: Upload Strikeline APK Artifact
         uses: actions/upload-artifact@v4
